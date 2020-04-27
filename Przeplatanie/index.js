@@ -24,10 +24,6 @@
 * spełniają tego warunku, funkcja powinna rzucić wyjątek.
 */
 
-function zipIt(first, second) {
-    return `${first}${second}`;
-}
-
 /* Weryfikacja */
 
 function verify(input, goal) {
