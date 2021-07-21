@@ -36,26 +36,50 @@ function verify(input, goal) {
   }
 }
 
-verify(convertAstToHtmlString(
-  { 
-    "nodeType": "element",
-    "tagName": "div",
-    "attributes": [ { "name": "class", "value": "test" } ],
-    "children": [ { "nodeType": "text", "value": "Hello world!" }]
-}), '<div class="test">Hello world!</div>');
+// verify(convertAstToHtmlString(
+//   { 
+//     "nodeType": "element",
+//     "tagName": "div",
+//     "attributes": [ { "name": "class", "value": "test" } ],
+//     "children": [ { "nodeType": "text", "value": "Hello world!" }]
+// }), '<div class="test">Hello world!</div>');
 
 
 const obj = { 
     "nodeType": "element",
     "tagName": "div",
-    "attributes": [ { "name": "class", "value": "test" } ],
+    "attributes": [ { "name": "class", "value": "test" }, { "name": "class", "value": "test12" }, { "name": "id", "value": "test12" }],
     "children": [ { "nodeType": "text", "value": "Hello world!" }]
 };
 
 function convertAstToHtmlString(stringObj){
     const element = document.createElement(stringObj.tagName);
-    element.setAttribute(stringObj.attributes[0].name, stringObj.attributes[0].value);
-    element.innerHTML = stringObj.children[0].value;
-    
-    return element.outerHTML;
+    const attributes = stringObj.attributes;
+    const attributesObj = {};
+    let valueContentClass = "";
+
+    for(const t of attributes){
+      if(t.name === "class"){
+        t.name = "className";
+
+        valueContentClass += t.value+" ";
+
+        Object.defineProperty(attributesObj, t.name, {
+          value: valueContentClass,
+          configurable: true,
+          enumerable: true,
+        });
+      }else{
+        Object.defineProperty(attributesObj, t.name, {
+          value: t.value,
+          configurable: true,
+          enumerable: true,
+        });
+      }
+    }
+    Object.assign(element, attributesObj);
+
+    document.body.appendChild(element);
 }
+
+convertAstToHtmlString(obj);
